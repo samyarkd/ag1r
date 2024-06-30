@@ -5,6 +5,7 @@ return {
   opts = {
     options = {
       separator_style = 'slant',
+      close_command = require('bufdelete').bufdelete,
     },
   },
 }
