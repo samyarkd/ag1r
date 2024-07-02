@@ -3,7 +3,6 @@ return {
   opts = {},
   keys = {
     { '<leader>x', '<cmd>bdelete<cr>', desc = 'Close Current Buffer' },
-    { ':q<CR>', '<cmd>bdelete<cr>', desc = 'Close Current Buffer' },
   },
   config = function()
     -- Override :q to close the buffer instead of exiting Neovim
