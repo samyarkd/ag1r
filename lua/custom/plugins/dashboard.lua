@@ -86,37 +86,6 @@ return {
       button.key_format = '  %s'
     end
 
-    -- open dashboard after having no buffers
-    vim.defer_fn(function()
-      vim.api.nvim_create_autocmd('BufDelete', {
-        group = vim.api.nvim_create_augroup('open-dashboard-after-last-buffer-close', { clear = true }),
-        callback = function(event)
-          for buf = 1, vim.fn.bufnr(0) do
-            if buf ~= event.buf and vim.fn.buflisted(buf) == 1 then
-              if vim.api.nvim_buf_get_name(buf) ~= '' and vim.bo[buf].filetype ~= 'dashboard' then
-                return
-              end
-            end
-          end
-
-          vim.cmd 'Dashboard'
-        end,
-      })
-    end, 0)
-
-    -- open dashboard after closing lazy
-    if vim.o.filetype == 'lazy' then
-      vim.api.nvim_create_autocmd('WinClosed', {
-        pattern = tostring(vim.api.nvim_get_current_win()),
-        once = true,
-        callback = function()
-          vim.schedule(function()
-            vim.api.nvim_exec_autocmds('UIEnter', { group = 'dashboard' })
-          end)
-        end,
-      })
-    end
-
     return opts
   end,
 }
