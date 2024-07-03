@@ -7,6 +7,10 @@ return {
 
     local terminals = {}
 
+    -- Detect the operating system
+    local is_windows = vim.loop.os_uname().sysname == 'Windows_NT'
+    local shell_cmd = is_windows and 'powershell' or 'bash'
+
     local function create_terminal(cmd, keymap, desc)
       local term = Terminal:new {
         cmd = cmd,
@@ -50,9 +54,9 @@ return {
 
     -- Create terminals
     create_terminal('lazygit', '<leader>gg', 'lazygit')
-    -- TODO: change this in a way to  use the current open terminal
-    create_terminal('powershell', '<A-1>', 'powerone')
-    create_terminal('powershell', '<A-2>', 'powertwo')
-    create_terminal('powershell', '<A-3>', 'powerthree')
+    -- Create terminals with the appropriate shell command
+    create_terminal(shell_cmd, '<A-1>', 'shellone')
+    create_terminal(shell_cmd, '<A-2>', 'shelltwo')
+    create_terminal(shell_cmd, '<A-3>', 'shellthree')
   end,
 }
