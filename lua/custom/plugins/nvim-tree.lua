@@ -3,5 +3,11 @@ return {
   keys = {
     { '<leader>e', '<cmd>NvimTreeToggle<cr>', desc = 'Toggle Tree' },
   },
-  opts = {},
+  opts = {
+    git = {
+      enable = true,
+      ignore = false,
+      timeout = 400,
+    },
+  },
 }
