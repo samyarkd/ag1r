@@ -9,7 +9,7 @@ return {
 
     -- Detect the operating system
     local is_windows = vim.loop.os_uname().sysname == 'Windows_NT'
-    local shell_cmd = is_windows and 'powershell' or 'bash'
+    local shell_cmd = is_windows and 'pwsh' or 'bash'
 
     local function create_terminal(cmd, keymap, desc)
       local term = Terminal:new {
@@ -21,7 +21,6 @@ return {
         on_open = function(term)
           vim.cmd 'startinsert!'
           vim.api.nvim_buf_set_keymap(term.bufnr, 'n', 'q', '<cmd>close<CR>', { noremap = true, silent = true })
-          vim.api.nvim_buf_set_keymap(term.bufnr, 't', keymap, '<cmd>lua _G.' .. desc .. '_toggle()<CR>', { noremap = true, silent = true })
         end,
         on_close = function()
           vim.cmd 'startinsert!'
@@ -44,8 +43,6 @@ return {
       _G[function_name] = toggle_terminal
 
       vim.api.nvim_set_keymap('n', keymap, '<cmd>lua _G.' .. function_name .. '()<CR>', { noremap = true, silent = true, desc = desc })
-      vim.api.nvim_set_keymap('t', keymap, '<cmd>lua _G.' .. function_name .. '()<CR>', { noremap = true, silent = true, desc = desc })
-
       -- Add the terminal to the list of terminals
       table.insert(terminals, term)
 
