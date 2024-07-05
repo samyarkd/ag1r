@@ -9,5 +9,12 @@ return {
       ignore = false,
       timeout = 400,
     },
+
+    update_cwd = true,
+
+    update_focused_file = {
+      enable = true,
+      update_cwd = false,
+    },
   },
 }
