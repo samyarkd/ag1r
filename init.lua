@@ -713,7 +713,9 @@ require('lazy').setup({
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
       vim.cmd.colorscheme 'carbonfox'
     end,
-    opts = {},
+    opts = {
+      transparent = vim.g.transparent_enabled,
+    },
   },
 
   -- Highlight todo, notes, etc in comments
