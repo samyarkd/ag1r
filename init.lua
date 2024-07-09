@@ -566,21 +566,6 @@ require('lazy').setup({
     end,
   },
 
-  {
-    'jose-elias-alvarez/null-ls.nvim',
-    config = function(self, opts)
-      local null_ls = require 'null-ls'
-      opts.sources = {
-        null_ls.builtins.diagnostics.eslint_d.with {
-          diagnostics_format = '[eslint] #{m}\n(#{c})',
-        },
-        null_ls.builtins.diagnostics.fish,
-      }
-
-      return opts
-    end,
-  },
-
   { -- Autoformat
     'stevearc/conform.nvim',
     lazy = false,
