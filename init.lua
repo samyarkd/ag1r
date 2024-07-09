@@ -127,6 +127,20 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- this will run every time opening a new buffer
+vim.api.nvim_create_autocmd('BufReadPre', {
+  callback = function()
+    require('colorizer').attach_to_buffer(0)
+  end,
+})
+
+-- this will run when a new buffer is opened
+vim.api.nvim_create_autocmd('BufNewFile', {
+  callback = function()
+    require('colorizer').attach_to_buffer(0)
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -552,6 +566,21 @@ require('lazy').setup({
     end,
   },
 
+  {
+    'jose-elias-alvarez/null-ls.nvim',
+    config = function(self, opts)
+      local null_ls = require 'null-ls'
+      opts.sources = {
+        null_ls.builtins.diagnostics.eslint_d.with {
+          diagnostics_format = '[eslint] #{m}\n(#{c})',
+        },
+        null_ls.builtins.diagnostics.fish,
+      }
+
+      return opts
+    end,
+  },
+
   { -- Autoformat
     'stevearc/conform.nvim',
     lazy = false,
@@ -584,7 +613,13 @@ require('lazy').setup({
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
-        javascript = { { 'prettierd', 'prettier' } },
+        javascript = { 'prettierd' },
+        typescript = { 'prettierd' },
+        html = { 'prettierd' },
+        css = { 'prettierd' },
+        astro = { 'prettierd' },
+        javascriptreact = { 'prettierd' },
+        typescriptreact = { 'prettierd' },
       },
     },
   },
@@ -606,15 +641,17 @@ require('lazy').setup({
           return 'make install_jsregexp'
         end)(),
         dependencies = {
-          -- `friendly-snippets` contains a variety of premade snippets.
-          --    See the README about individual language/framework/plugin snippets:
+          -- `friendly-snippets` contains a variety of premade snippets. See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+            end,
+          },
+          {
+            'onsails/lspkind.nvim',
+          },
         },
       },
       'saadparwaiz1/cmp_luasnip',
@@ -629,6 +666,8 @@ require('lazy').setup({
       -- See `:help cmp`
       local cmp = require 'cmp'
       local luasnip = require 'luasnip'
+      local lspkind = require 'lspkind'
+
       luasnip.config.setup {}
 
       cmp.setup {
@@ -639,6 +678,7 @@ require('lazy').setup({
         },
         completion = { completeopt = 'menu,menuone,noinsert' },
 
+        formatting = { format = lspkind.cmp_format { with_text = false } },
         -- For an understanding of why these mappings were
         -- chosen, you will need to read `:help ins-completion`
         --
