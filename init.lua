@@ -130,7 +130,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- this will run every time opening a new buffer
 vim.api.nvim_create_autocmd('BufReadPre', {
   callback = function()
-    require('colorizer').attach_to_buffer(0)
+    require('colorizer').attach_to_buffer(0, { '*', mode = 'background', css = true, tailwind = true })
   end,
 })
 
@@ -517,6 +517,7 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
 
         tsserver = {},
+        tailwindcss = {},
         --
 
         lua_ls = {
@@ -634,26 +635,26 @@ require('lazy').setup({
               require('luasnip.loaders.from_vscode').lazy_load()
             end,
           },
-          {
-            'onsails/lspkind.nvim',
-          },
         },
       },
       'saadparwaiz1/cmp_luasnip',
 
+      {
+        'onsails/lspkind.nvim',
+        config = true,
+      },
       -- Adds other completion capabilities.
       --  nvim-cmp does not ship with all sources by default. They are split
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
+      { 'roobert/tailwindcss-colorizer-cmp.nvim', config = true },
     },
     config = function()
       -- See `:help cmp`
       local cmp = require 'cmp'
       local luasnip = require 'luasnip'
       local lspkind = require 'lspkind'
-
-      luasnip.config.setup {}
 
       cmp.setup {
         snippet = {
@@ -663,7 +664,13 @@ require('lazy').setup({
         },
         completion = { completeopt = 'menu,menuone,noinsert' },
 
-        formatting = { format = lspkind.cmp_format { with_text = false } },
+        formatting = {
+          format = function(entry, item)
+            local icons = lspkind.cmp_format { with_text = false }(entry, item)
+            local twcolors = require('tailwindcss-colorizer-cmp').formatter(entry, icons)
+            return twcolors
+          end,
+        },
         -- For an understanding of why these mappings were
         -- chosen, you will need to read `:help ins-completion`
         --
