@@ -127,20 +127,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- this will run every time opening a new buffer
-vim.api.nvim_create_autocmd('BufReadPre', {
-  callback = function()
-    require('colorizer').attach_to_buffer(0, { '*', mode = 'background', css = true, tailwind = true })
-  end,
-})
-
--- this will run when a new buffer is opened
-vim.api.nvim_create_autocmd('BufNewFile', {
-  callback = function()
-    require('colorizer').attach_to_buffer(0)
-  end,
-})
-
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -641,7 +627,14 @@ require('lazy').setup({
 
       {
         'onsails/lspkind.nvim',
-        config = true,
+        config = function(self, opts)
+          require('lspkind').init {
+            mode = 'symbol',
+            symbol_map = {
+              Codeium = '✨',
+            },
+          }
+        end,
       },
       -- Adds other completion capabilities.
       --  nvim-cmp does not ship with all sources by default. They are split
@@ -666,10 +659,20 @@ require('lazy').setup({
 
         formatting = {
           format = function(entry, item)
-            local icons = lspkind.cmp_format { with_text = false }(entry, item)
-            local twcolors = require('tailwindcss-colorizer-cmp').formatter(entry, icons)
-            return twcolors
+            local color_item = require('nvim-highlight-colors').format(entry, { kind = item.kind })
+
+            item = lspkind.cmp_format {
+              with_text = false,
+            }(entry, item)
+
+            if color_item.abbr_hl_group then
+              item.kind_hl_group = color_item.abbr_hl_group
+              item.kind = color_item.abbr
+            end
+            return item
           end,
+          expandable_indicator = false,
+          fields = { 'abbr', 'kind', 'menu' },
         },
         -- For an understanding of why these mappings were
         -- chosen, you will need to read `:help ins-completion`
@@ -699,7 +702,9 @@ require('lazy').setup({
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
           --  completions whenever it has completion options available.
-          ['<C-Space>'] = cmp.mapping.complete {},
+          ['<C-Space>'] = cmp.mapping.complete {
+            reason = cmp.ContextReason.Auto,
+          },
 
           -- Think of <c-l> as moving to the right of your snippet expansion.
           --  So if you have a snippet that's like:
@@ -727,6 +732,7 @@ require('lazy').setup({
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
+          { name = 'codeium' },
         },
       }
     end,
@@ -823,25 +829,6 @@ require('lazy').setup({
     end,
   },
 
-  -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
-  -- init.lua. If you want these files, they are in the repository, so you can just download them and
-  -- place them in the correct locations.
-
-  -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
-  --
-  --  Here are some example plugins that I've included in the Kickstart repository.
-  --  Uncomment any of the lines below to enable them (you will need to restart nvim).
-  --
-  -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
-
-  -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-  --    This is the easiest way to modularize your config.
-  --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
   { import = 'plugins' },
