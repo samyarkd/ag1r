@@ -6,8 +6,5 @@ return {
   {
     "neovim/nvim-lspconfig",
     opts = opts,
-    dependencies = {
-      { "hrsh7th/cmp-cmdline" },
-    },
   },
 }
