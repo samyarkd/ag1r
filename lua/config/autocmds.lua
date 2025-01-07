@@ -11,6 +11,6 @@ vim.api.nvim_create_autocmd("BufEnter", {
   group = augroup("BufAttachGroup"),
   pattern = "*",
   callback = function()
-    vim.cmd("MinuetToggleVirtualText")
+    -- run a command on when buffer entered
   end,
 })
