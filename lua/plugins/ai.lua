@@ -4,8 +4,16 @@ return {
   lazy = false,
   version = false, -- set this to "*" if you want to always pull the latest change, false to update on release
   opts = {
-    provider = "gemini",
-    auto_suggestions_provider = "gemini",
+    provider = "groq",
+    auto_suggestions_provider = "groq",
+    vendors = {
+      groq = {
+        __inherited_from = "openai",
+        api_key_name = "GROQ_API_KEY",
+        endpoint = "https://api.groq.com/openai/v1/",
+        model = "mixtral-8x7b-32768",
+      },
+    },
     behaviour = {
       auto_suggestions = false, -- Experimental stage
       auto_set_highlight_group = true,
