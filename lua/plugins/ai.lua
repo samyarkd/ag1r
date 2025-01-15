@@ -14,6 +14,13 @@ return {
         adapter = "gemini",
       },
     },
+    display = {
+      chat = {
+        diff = {
+          enabled = true,
+        },
+      },
+    },
   },
   keys = {
     { "<leader>aa", "<cmd>CodeCompanionChat<cr>", desc = "Open Chat 🪄" },
