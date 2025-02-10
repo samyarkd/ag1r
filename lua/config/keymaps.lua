@@ -4,11 +4,16 @@
 
 local map = LazyVim.safe_keymap_set
 
-map("n", "<space>xW", "", {
-  noremap = true,
-  callback = function()
+map("n", "<space>xW", function()
+  local status, err = pcall(function()
     for _, client in ipairs(vim.lsp.get_clients()) do
       require("workspace-diagnostics").populate_workspace_diagnostics(client, 0)
     end
-  end,
+  end)
+  if not status then
+    vim.notify("Error in populate_workspace_diagnostics: " .. err, vim.log.levels.ERROR)
+  end
+end, {
+  noremap = true,
+  desc = "find all diagnostics",
 })

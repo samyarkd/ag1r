@@ -51,3 +51,14 @@ require("lazy").setup({
     },
   },
 })
+
+require("workspace-diagnostics").setup({
+  workspace_files = function()
+    local git_files = vim.fn.systemlist("git ls-files --cached --others --exclude-standard")
+    if vim.v.shell_error == 0 then
+      return git_files
+    else
+      return vim.fn.globpath(".", "**/*", false, true)
+    end
+  end,
+})
